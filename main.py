@@ -477,8 +477,8 @@ async def parse_command(message: discord.Message):
 		msg[1] = " ".join(msg[1:])
 		await client.party.send(msg[1])
 		await message.channel.send("<:Accept:719047548219949136> Sent Party Message", delete_after=10)
-	elif msg[0].lower() == "variants":
-		
+#	elif msg[0].lower() == "variants":
+#		
 
 ###################
 #     Discord     #
