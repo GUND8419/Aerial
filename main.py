@@ -1,4 +1,4 @@
-import os, discord, fortnitepy, json, yaml, dotenv, asyncio, random, requests
+import os, discord, fortnitepy, json, yaml, dotenv, asyncio, random, requests, time
 from functools import partial
 
 # Load YAML Config #
@@ -108,7 +108,7 @@ async def stop_bot(client: fortnitepy.Client):
 		)
 	)
 
-async def start_bot(member: discord.Member, time: int = 5400):
+async def start_bot(member: discord.Member, time: int):
 	try:
 		message = await member.send(
 			embed=discord.Embed(
@@ -264,7 +264,7 @@ async def start_bot(member: discord.Member, time: int = 5400):
 		)
 	)
 	
-	loop.call_later(time, await stop_bot(client))
+	loop.call_later(time, stop_bot, client)
 
 async def parse_command(message: discord.Message):
 	if type(message.channel) != discord.DMChannel or message.author.bot:
@@ -449,7 +449,7 @@ async def parse_command(message: discord.Message):
 						)
 					)
 					await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
-				elif msg[2].lower() == "harvesting_tool" or msg[2].lower() == "pickaxe":
+				elif msg[2].lower() == "harvesting_tool" or msg[2].lower() == "harvestingtool" or msg[2].lower() == "pickaxe":
 					await client.party.me.set_pickaxe(
 						asset=client.party.me.pickaxe,
 						variants=client.party.me.create_variants(
@@ -462,15 +462,24 @@ async def parse_command(message: discord.Message):
 				if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
 					await client.party.me.set_outfit(
 						asset=client.party.me.outfit,
+						variants=client.party.me.outfit_variants,
 						enlightenment=(msg[3], msg[4])
 					)
-					await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season" + msg[3] + " Level " + msg[4], delete_after=10)
+					await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season " + msg[3] + " Level " + msg[4], delete_after=10)
 				elif msg[2].lower() == "backbling" or msg[2].lower() == "backpack":
 					await client.party.me.set_backpack(
 						asset=client.party.me.backpack,
+						variants=client.party.me.backpack_variants,
 						enlightenment=(msg[3], msg[4])
 					)
-					await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season" + msg[3] + " Level " + msg[4], delete_after=10)					
+					await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season " + msg[3] + " Level " + msg[4], delete_after=10)
+				elif msg[2].lower() == "harvesting_tool" or msg[2].lower() == "harvestingtool" or msg[2].lower() == "pickaxe":
+					await client.party.me.set_pickaxe(
+						asset=client.party.me.pickaxe,
+						variants=client.party.me.pickaxe_variants,
+						enlightenment=(msg[3], msg[4])
+					)
+					await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season" + msg[3] + " Level " + msg[4], delete_after=10)
 	elif msg[0].lower() == "friend":
 		msg[2] = " ".join(msg[2:])
 		p = await client.fetch_profile(msg[2])
@@ -504,7 +513,7 @@ async def on_message(message: discord.Message):
 	if message.channel.id == 718979003968520283:
 		if "start" in message.content.lower():
 			await message.delete()
-			await start_bot(message.author)
+			await start_bot(message.author, 5400)
 		else:
 			await message.delete()
 	elif type(message.channel) == discord.DMChannel:
