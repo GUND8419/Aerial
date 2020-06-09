@@ -33,7 +33,7 @@ def get_cosmetic(name: str, backendType: str):
 			"backendType": backendType,
 			"name": name
 		}
-	))
+	).text)
 
 def get_cosmetic_by_id(id: str):
 	r = requests.get(
