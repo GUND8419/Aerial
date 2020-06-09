@@ -463,8 +463,13 @@ async def parse_command(message: discord.Message):
 			p = client.get_friend(p.id)
 			if p == None:
 				await message.channel.send("<:Reject:719047548819472446> Not Friends with " + p.display_name, delete_after=10)
+				return
 			await p.remove()
 			await message.channel.send("<:Accept:719047548219949136> Removed " + p.display_name, delete_after=10)
+	elif msg[0].lower() == "send":
+		msg[1] = " ".join(msg[1:])
+		await client.party.send(msg[1])
+		await message.channel.send("<:Accept:719047548219949136> Sent Party Message", delete_after=10)
 
 ###################
 #     Discord     #
