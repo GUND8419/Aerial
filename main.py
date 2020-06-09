@@ -33,7 +33,13 @@ def get_cosmetic(name: str, backendType: str):
 			"backendType": backendType,
 			"name": name
 		}
-	).text)
+	))
+
+def get_cosmetic_by_id(id: str):
+	r = requests.get(
+		"https://benbotfn.tk/api/v1/cosmetics/br/" + id
+	)
+	return json.loads(r.text) if r.status_code != 404 else None
 
 def get_playlist(name: str):
 	return json.loads(requests.get(
@@ -254,7 +260,7 @@ async def start_bot(member: discord.Member, time: int = 5400):
 			type="rich",
 			color=0xfc5fe2
 		).set_thumbnail(
-			url=get_cosmetic("Journey vs Hazard", "AthenaCharacter")['icons']['icon']
+			url=get_cosmetic_by_id("CID_565_Athena_Commando_F_RockClimber")['icons']['icon']
 		)
 	)
 	
@@ -280,10 +286,10 @@ async def parse_command(message: discord.Message):
 	elif msg[0].lower() == "promote":
 		msg[1] = " ".join(msg[1:])
 		p = await client.fetch_profile(msg[1])
-		if p == None:
+		if p is None:
 			return
 		p = client.party.get_member(p.id)
-		if p == None:
+		if p is None:
 			return
 		try:
 			await p.promote()
@@ -293,10 +299,10 @@ async def parse_command(message: discord.Message):
 	elif msg[0].lower() == "kick":
 		msg[1] = " ".join(msg[1:])
 		p = await client.fetch_profile(msg[1])
-		if p == None:
+		if p is None:
 			return
 		p = client.party.get_member(p.id)
-		if p == None:
+		if p is None:
 			return
 		try:
 			await p.kick()
@@ -306,10 +312,10 @@ async def parse_command(message: discord.Message):
 	elif msg[0].lower() == "join":
 		msg[1] = " ".join(msg[1:])
 		p = await client.fetch_profile(msg[1])
-		if p == None:
+		if p is None:
 			return
 		p = client.get_friend(p.id)
-		if p == None:
+		if p is None:
 			return
 		try:
 			await p.join_party()
@@ -337,7 +343,7 @@ async def parse_command(message: discord.Message):
 				if msg[2].startswith("BID_"):
 					await client.party.me.set_backpack(msg[2])
 					await message.channel.send("<:Accept:719047548219949136> Set Back Bling to " + msg[2], delete_after=10)
-				elif msg[2] == "none":
+				elif msg[2].lower() == "none":
 					await client.party.me.clear_backpack()
 					await message.channel.send("<:Accept:719047548219949136> Set Back Bling to None", delete_after=10)
 				else:
@@ -352,7 +358,7 @@ async def parse_command(message: discord.Message):
 				if msg[2].startswith("EID_"):
 					await client.party.me.set_emote(msg[2])
 					await message.channel.send("<:Accept:719047548219949136> Set Emote to " + msg[2], delete_after=10)
-				elif msg[2] == "none":
+				elif msg[2].lower() == "none":
 					await client.party.me.clear_emote()
 					await message.channel.send("<:Accept:719047548219949136> Set Emote to None", delete_after=10)
 				else:
@@ -360,6 +366,7 @@ async def parse_command(message: discord.Message):
 					if list(cosmetic.keys()) == ['error']:
 						await message.channel.send("<:Reject:719047548819472446> Cannot Find Emote " + msg[2], delete_after=10)
 					else:
+						await client.party.me.clear_emote()
 						await client.party.me.set_emote(cosmetic['id'])
 						await message.channel.send("<:Accept:719047548219949136> Set Emote to " + cosmetic['name'], delete_after=10)
 			elif msg[1].lower() == "harvesting_tool" or msg[1].lower() == "harvestingtool" or msg[1].lower() == "pickaxe":
@@ -454,14 +461,14 @@ async def parse_command(message: discord.Message):
 	elif msg[0].lower() == "friend":
 		msg[2] = " ".join(msg[2:])
 		p = await client.fetch_profile(msg[2])
-		if p == None:
+		if p is None:
 			return
 		if msg[1].lower() == "add":
 			await client.add_friend(p.id)
 			await message.channel.send("<:Accept:719047548219949136> Sent Friend Request to " + p.display_name, delete_after=10)
 		elif msg[1].lower() == "remove":
 			p = client.get_friend(p.id)
-			if p == None:
+			if p is None:
 				await message.channel.send("<:Reject:719047548819472446> Not Friends with " + p.display_name, delete_after=10)
 				return
 			await p.remove()
@@ -470,6 +477,8 @@ async def parse_command(message: discord.Message):
 		msg[1] = " ".join(msg[1:])
 		await client.party.send(msg[1])
 		await message.channel.send("<:Accept:719047548219949136> Sent Party Message", delete_after=10)
+	elif msg[0].lower() == "variants":
+		
 
 ###################
 #     Discord     #
