@@ -86,7 +86,7 @@ async def refresh_message(client: fortnitepy.Client):
 			type="rich",
 			color=0xfc5fe2
 		).set_thumbnail(
-			url=get_cosmetic(client.party.me.outfit, "AthenaCharacter")['icons']['icon']
+			url=get_cosmetic_by_id(client.party.me.outfit)['icons']['icon']
 		)
 	)
 
@@ -489,7 +489,7 @@ loop.create_task(dclient.start(os.getenv("TOKEN")))
 @dclient.event
 async def on_message(message: discord.Message):
 	if message.channel.id == 718979003968520283:
-		if "start" in message.content:
+		if "start" in message.content.lower():
 			await message.delete()
 			await start_bot(message.author)
 		else:
