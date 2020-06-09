@@ -5,30 +5,45 @@
 		<title>Aerial</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="description" content="Documentation for Aerial Fortnite" />
-		<meta name="theme-color" content="#A537C6">
+		<meta name="theme-color" content="#A537C6" />
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 		<meta property="og:image" content="https://cdn.discordapp.com/app-assets/718924404876378112/719209499725922404.png" />
 		<link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/96/000000/book.png" />
-		<link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css" />
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/dark.css" />
 	</head>
 	<body>
 		<div id="app"></div>
 		<script>
 			window.$docsify = {
-			  name: '<b>Aerial</b>',
-			  repo: 'https://github.com/andre4ik3/Aerial',
+			  name: "<b>Aerial</b>",
+			  repo: "https://github.com/andre4ik3/Aerial",
 			  loadSidebar: "_Sidebar.md",
 			  coverpage: "_Coverpage.md",
+			  loadNavbar: "_Navbar.md",
+			  mergeNavbar: true,
 			  onlyCover: true,
 			  autoHeader: true,
 			  subMaxLevel: 2,
 			  homepage: "Home.md",
-			  themeColor: "#a537c6"
+			  themeColor: "#c55ae6",
+			  tabs: {
+				  theme: "material"
+			  },
+			  search: {
+				  placeholder: "Search",
+				  noData: "No Results!",
+				  depth: 6,
+			  }
+			}
+			if (typeof navigator.serviceWorker !== 'undefined') {
+				navigator.serviceWorker.register('sw.js')
 			}
 		</script>
-		<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-		<script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
 		<script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+		<script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
 		<script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
 	</body>
 </html>

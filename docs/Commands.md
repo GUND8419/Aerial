@@ -25,6 +25,7 @@ Aerial Bot has a wide range of commands, including changing cosmetics, kicking, 
 - `join <user>` Join a friend's party.
 - `kick <user>` Kick a party member, if the client is party leader.
 - `promote <user>` Promote another party member, if the client is party leader.
+- `send <message>` Send a message in party chat.
 
 ### Friend
 - `friend add <user>` Send a friend request to a user.
