@@ -458,6 +458,19 @@ async def parse_command(message: discord.Message):
 						)
 					)
 					await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
+			elif msg[1].lower() == "enlightenment" or msg[1].lower() == "enlighten":
+				if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
+					await client.party.me.set_outfit(
+						asset=client.party.me.outfit,
+						enlightenment=(msg[3], msg[4])
+					)
+					await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season" + msg[3] + " Level " + msg[4], delete_after=10)
+				elif msg[2].lower() == "backbling" or msg[2].lower() == "backpack":
+					await client.party.me.set_backpack(
+						asset=client.party.me.backpack,
+						enlightenment=(msg[3], msg[4])
+					)
+					await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season" + msg[3] + " Level " + msg[4], delete_after=10)					
 	elif msg[0].lower() == "friend":
 		msg[2] = " ".join(msg[2:])
 		p = await client.fetch_profile(msg[2])

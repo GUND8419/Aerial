@@ -16,7 +16,15 @@ Aerial Bot has a wide range of commands, including changing cosmetics, kicking, 
 	- `set battlepass level <level>` Set the client's battle pass level.
 	- `set battlepass self_boost_xp <boost>` Set the client's battle pass personal XP boost.
 	- `set battlepass friend_boost_xp` Set the client's battle pass friend XP boost.
-- `set variant <item> <key> <value>` Set the client's variants for either the outfit, backbling, or harvesting tool. This command is considered advanced, since variants don't seem to follow much logic.
+- `set variant <item> <key> <value>` Set the client's variants for either the outfit, back bling, or harvesting tool. This command is considered advanced, since variants don't seem to follow much logic.
+- `set enlightenment <season> <level>` Set the client's enlightenment level for the outfit or the back bling. You will probably have to select a variant before setting.  
+	```
+	Example for Golden Peely
+	
+	set outfit Agent Peely
+	set variant outfit progressive 4
+	set enlightenment 2 340
+	```
 
 ### Party
 - `set status <status>` Set the client's status.
