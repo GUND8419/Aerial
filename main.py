@@ -525,13 +525,52 @@ async def parse_command(message: discord.Message):
 			),
 			partial(
 				client.party.me.set_banner,
-				asset=p.outfit,
-				variants=p.outfit_variants
+				icon=p.banner[0],
+				color=p.banner[1],
+				season_level=p.banner[2]
 			),
+			partial(
+				client.party.me.set_battlepass_info,
+				has_purchased=p.battlepass_info[0],
+				level=p.battlepass_info[1],
+				self_boost_xp=p.battlepass_info[2],
+				friend_boost_xp=p.battlepass_info[3]
+			)
 		)
 		await message.channel.send("<:Accept:719047548219949136> Cloned " + p.display_name, delete_after=10)
-#	elif msg[0].lower() == "variants":
-#		
+	elif msg[0].lower() == "variants":
+		if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
+			cosm = get_cosmetic_by_id(client.party.me.outfit)
+		elif msg[2].lower() == "backbling" or msg[2].lower() == "backpack":
+			cosm = get_cosmetic_by_id(client.party.me.backpack)
+		elif msg[2].lower() == "harvesting_tool" or msg[2].lower() == "harvestingtool" or msg[2].lower() == "pickaxe":
+			cosm = get_cosmetic_by_id(client.party.me.pickaxe)
+		elif msg[2].startswith(("CID", "BID", "Pickaxe_ID")):
+			cosm = get_cosmetic_by_id(msg[2])
+		if cosm is None:
+			await message.channel.send("<:Reject:719047548819472446> Cannot Find Cosmetic " + msg[2])
+			return
+		elif "variants" not in list(cosm.keys()):
+			await message.channel.send("<:Reject:719047548819472446> " + cosm['name'] " has no variants")
+			return
+		await message.channel.send(embed=discord.Embed(
+			title="Variants for " + cosm['name'],
+			type="rich"
+		).set_thumbnail(
+			url=cosm['icons']['icon']
+		))
+		for ch in cosm['variants']:
+			embed = discord.Embed(
+				title=ch['channel'],
+				type="rich"
+			)
+			for st in cosm['options']:
+				embed.add_field(
+					name=st['tag'],
+					value=st['name'],
+					inline=True
+				)
+			await message.channel.send(embed=embed)
 
 ###################
 #     Discord     #

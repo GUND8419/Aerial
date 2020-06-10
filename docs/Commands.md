@@ -25,6 +25,8 @@ Aerial Bot has a wide range of commands, including changing cosmetics, kicking, 
 	set variant outfit progressive 4
 	set enlightenment 2 340
 	```
+- `clone <user>` Copies the cosmetic loadout of a user in the party.
+- `variants <item>` Show the possible variants for the current outfit, back bling, or harvesting tool.
 
 ### Party
 - `set status <status>` Set the client's status.
