@@ -551,7 +551,7 @@ async def parse_command(message: discord.Message):
 			await message.channel.send("<:Reject:719047548819472446> Cannot Find Cosmetic " + msg[2])
 			return
 		elif "variants" not in list(cosm.keys()):
-			await message.channel.send("<:Reject:719047548819472446> " + cosm['name'] " has no variants")
+			await message.channel.send("<:Reject:719047548819472446> " + cosm['name'] + " has no variants")
 			return
 		await message.channel.send(embed=discord.Embed(
 			title="Variants for " + cosm['name'],
