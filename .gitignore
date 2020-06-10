@@ -1,6 +1,7 @@
 .DS_Store
 .nova
 .env
+.vercel
 config.yml
 device_auths.yml
 __pycache__

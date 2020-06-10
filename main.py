@@ -264,7 +264,7 @@ async def start_bot(member: discord.Member, time: int):
 		)
 	)
 	
-	loop.call_later(time, stop_bot, client)
+	loop.call_later(time, await stop_bot, client)
 
 async def parse_command(message: discord.Message):
 	if type(message.channel) != discord.DMChannel or message.author.bot:
@@ -499,6 +499,37 @@ async def parse_command(message: discord.Message):
 		msg[1] = " ".join(msg[1:])
 		await client.party.send(msg[1])
 		await message.channel.send("<:Accept:719047548219949136> Sent Party Message", delete_after=10)
+	elif msg[0].lower() == "clone" or msg[0].lower() == "copy":
+		msg[1] = " ".join(msg[1:])
+		p = await client.fetch_profile(msg[1])
+		if p is None:
+			return
+		p = client.party.get_member(p.id)
+		if p is None:
+			return
+		await client.party.me.edit(
+			partial(
+				client.party.me.set_outfit,
+				asset=p.outfit,
+				variants=p.outfit_variants
+			),
+			partial(
+				client.party.me.set_backpack,
+				asset=p.backpack,
+				variants=p.backpack_variants
+			),
+			partial(
+				client.party.me.set_pickaxe,
+				asset=p.pickaxe,
+				variants=p.pickaxe_variants
+			),
+			partial(
+				client.party.me.set_banner,
+				asset=p.outfit,
+				variants=p.outfit_variants
+			),
+		)
+		await message.channel.send("<:Accept:719047548219949136> Cloned " + p.display_name, delete_after=10)
 #	elif msg[0].lower() == "variants":
 #		
 
