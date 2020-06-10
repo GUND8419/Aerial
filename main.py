@@ -66,14 +66,10 @@ loop = asyncio.get_event_loop()
 dclient = discord.Client(
 	activity=discord.Streaming(
 		platform="Twitch",
-		name="Fortnite Bots",
-		details="Fortnite Bots",
-		game="Fortnite Bots",
-		url="https://twitch.tv/andre4ik3",
-		assets={
-			"large_image": "purple"
-		},
-		twitch_name="purple"
+		name="256 Fortnite Bots",
+		details="256 Fortnite Bots",
+		game="256 Fortnite Bots",
+		url="https://twitch.tv/andre4ik3"
 	)
 )
 
@@ -402,10 +398,10 @@ async def parse_command(message: discord.Message):
 				elif msg[2].lower() == "level":
 					await client.party.me.set_battlepass_info(level=msg[3])
 					await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Level to " + msg[3], delete_after=10)
-				elif msg[3] == "self_boost_xp":
+				elif msg[2].lower() == "self_boost_xp":
 					await client.party.me.set_battlepass_info(self_boost_xp=msg[3])
 					await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Self Boost to " + msg[3], delete_after=10)
-				elif msg[3] == "friend_boost_xp":
+				elif msg[2].lower() == "friend_boost_xp":
 					await client.party.me.set_battlepass_info(friend_boost_xp=msg[3])
 					await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Friend Boost to " + msg[3], delete_after=10)
 			elif msg[1].lower() == "status" or msg[1].lower() == "presence":
@@ -428,8 +424,11 @@ async def parse_command(message: discord.Message):
 					if list(playlist.keys()) == ['error']:
 						await message.channel.send("<:Reject:719047548819472446> Cannot Find Playlist " + msg[2], delete_after=10)
 					else:
-						await client.party.me.set_pickaxe(playlist['id'])
-						await message.channel.send("<:Accept:719047548219949136> Set Playlist to " + playlist['name'], delete_after=10)
+						try:
+							await client.party.me.set_playlist(playlist['id'])
+							await message.channel.send("<:Accept:719047548219949136> Set Playlist to " + playlist['name'], delete_after=10)
+						except fortnitepy.Forbidden:
+							await message.channel.send("<:Reject:719047548819472446> I am Not Party Leader!", delete_after=10)
 			elif msg[1].lower() == "variants" or msg[1].lower() == "variant":
 				if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
 					await client.party.me.set_outfit(
