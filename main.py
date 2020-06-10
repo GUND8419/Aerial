@@ -264,7 +264,7 @@ async def start_bot(member: discord.Member, time: int):
 		)
 	)
 	
-	loop.call_later(time, await stop_bot, client)
+	loop.call_later(time, loop.create_task, stop_bot, client)
 
 async def parse_command(message: discord.Message):
 	if type(message.channel) != discord.DMChannel or message.author.bot:
