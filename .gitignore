@@ -2,7 +2,7 @@
 .nova
 .env
 .vercel
-.sqlite
+*.sqlite
 config.yml
 device_auths.yml
 __pycache__
