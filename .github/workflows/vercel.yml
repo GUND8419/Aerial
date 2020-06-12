@@ -6,10 +6,7 @@ name: Vercel
 # events but only for the master branch
 on:
   push:
-    branches: 
-    - master
-    paths:
-    - "docs/"
+    branches: ["master"]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,6 +19,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v19.0.1+1
         with:
