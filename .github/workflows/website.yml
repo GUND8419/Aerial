@@ -15,7 +15,7 @@ jobs:
         with:
           username: Aerial
           server: ${{ secrets.PROD_HOST }}
-          private_key: ${{ secrets.PROD_KEY }}
+          ssh_private_key: ${{ secrets.PROD_KEY }}
           local_path: $GITHUB_WORKSPACE/site/**
           remote_path: /home/Aerial/site
           args: -o ConnectTimeout=5
