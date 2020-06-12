@@ -235,9 +235,19 @@ async def start_bot(member: discord.Member, time: int):
 		await f.remove()
 	for f in client.pending_friends.values():
 		await f.decline()
+	await client.party.me.edit_and_keep(
+		partial(client.party.me.set_outfit, random.choice([
+			"CID_565_Athena_Commando_F_RockClimber",
+			"CID_430_Athena_Commando_M_StormSoldier",
+			"CID_384_Athena_Commando_M_StreetAssassin",
+			"CID_564_Athena_Commando_M_TacticalFisherman"
+		])),
+		partial(client.party.me.set_backpack, "BID_122_HalloweenTomato"),
+		partial(client.party.me.set_banner, icon="otherbanner31", color="defaultcolor3", season_level=1337)
+	)
 	client.set_avatar(
 		fortnitepy.Avatar(
-			asset="CID_565_Athena_Commando_F_RockClimber",
+			asset=client.party.me.outfit,
 			background_colors=[
 				"7c0dc8",
 				"b521cc",
@@ -245,18 +255,13 @@ async def start_bot(member: discord.Member, time: int):
 			]
 		)
 	)
-	await client.party.me.edit_and_keep(
-		partial(client.party.me.set_outfit, "CID_565_Athena_Commando_F_RockClimber"),
-		partial(client.party.me.set_backpack, "BID_122_HalloweenTomato"),
-		partial(client.party.me.set_banner, icon="otherbanner31", color="defaultcolor3", season_level=1337)
-	)
 	await message.edit(
 		embed=discord.Embed(
 			title="<:Online:719038976677380138> " + client.user.display_name,
 			type="rich",
 			color=0xfc5fe2
 		).set_thumbnail(
-			url=get_cosmetic_by_id("CID_565_Athena_Commando_F_RockClimber")['icons']['icon']
+			url=get_cosmetic_by_id(client.party.me.outfit)['icons']['icon']
 		)
 	)
 	

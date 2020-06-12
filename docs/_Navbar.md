@@ -1,1 +1,0 @@
-* [Discord](https://discord.gg/3pTbfzq)

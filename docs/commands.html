@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang=en>
+	<head>
+		<meta charset="utf-8" />
+		<title>Aerial</title>
+		<meta name="description" content="Documentation for Aerial Fortnite" />
+		<meta name="theme-color" content="#A537C6" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta property="og:image" content="https://cdn.discordapp.com/app-assets/718924404876378112/719209499725922404.png" />
+		<link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/96/000000/book.png" />
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="https://aerial.andre4ik3.dev">Aerial</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="https://aerial.andre4ik3.dev">Home</a>
+					</li>
+					<li class="nav-item active">
+						<a class="nav-link" href="#">Documentation <span class="sr-only">(current)</span></a>
+					</li>
+					<li>
+						<a class="nav-link" href="https://discord.gg/r7DHHfY">Discord</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		<!-- Documentation Navbar -->
+		<nav class="nav nav-tabs bg-light" style="padding: 8px 8px 0px 8px;">
+			<a class="nav-link" href="index.html">Intro</a>
+			<a class="nav-link" href="hosting.html">Hosting</a>
+			<a class="nav-link active" href="#">Commands</a>
+		</nav>
+		<!-- Content -->
+		<div class="content" style="padding: 20px;">
+			<h1>Commands</h1>
+			<p>Aerial Bot has a wide range of commands, including changing cosmetics, kicking, promoting, joining, and more.</p>
+			<h2>Main Commands</h2>
+			<h3>Cosmetics</h3>
+			<ul>
+				<li>
+					<code>set outfit &lt;Name or ID&gt;</code> Set the outfit of the client.
+				</li>
+				<li>
+					<code>set backbling &lt;Name or ID or None&gt;</code> Set the back bling of the client.
+				</li>
+				<li>
+					<code>set harvesting_tool &lt;Name or ID&gt;</code> Set the harvesting tool of the client.
+				</li>
+				<li>
+					<code>set emote &lt;Name or ID or None&gt;</code> Set the emote of the client
+				</li>
+				<li>
+					<code>set banner</code>
+					<ul>
+						<li>
+							<code>set banner design &lt;design&gt;</code> Set the client's banner design.
+						</li>
+						<li>
+							<code>set banner color &lt;color&gt;</code> Set the client's banner color.
+						</li>
+						<li>
+							<code>set banner season_level &lt;level&gt;</code> Set the client's banner season level.
+						</li>
+					</ul>
+				</li>
+				<li>
+					<code>set battlepass</code>
+					<ul>
+						<li>
+							<code>set battlepass has_purchased &lt;True or False&gt;</code> Set the client's battle pass purchase status.
+						</li>
+						<li>
+							<code>set battlepass level &lt;level&gt;</code>	Set the client's battle pass level.
+						</li>
+						<li>
+							<code>set battlepass self_boost_xp &lt;amount&gt;</code> Set the client's battle pass personal XP boost.
+						</li>
+						<li>
+							<code>set battlepass friend_boost_xp &lt;amount&gt;</code> Set the client's battle pass friend XP boost.
+						</li>
+					</ul>
+				</li>
+				<li>
+					<code>set variant &lt;item&gt; &lt;key&gt; &lt;value&gt;</code> <span class="badge badge-danger">Advanced</span> Set the client's variants for an item. Variants don't follow much logic.
+				</li>
+				<li>
+					<code>set enlightenment &lt;season&gt; &lt;level&gt;</code> Set the client's enlightenment level for an item.
+				</li>
+				<li>
+					<code>clone &lt;user&gt;</code> Clone a user's cosmetic loadout.
+				</li>
+			</ul>
+			<h3>Party</h3>
+			<ul>
+				<li>
+					<code>set code &lt;matchmakingcode&gt;</code> Set the party's matchmaking code.
+				</li>
+				<li>
+					<code>set playlist &lt;Name or ID&gt;</code> Set the party's playlist.
+				</li>
+				<li>
+					<code>kick &lt;user&gt;</code> Kick a party member.
+				</li>
+				<li>
+					<code>promote &lt;user&gt;</code> Promote a party member.
+				</li>
+				<li>
+					<code>send &lt;message&gt;</code> Send a message to party chat.
+				</li>
+			</ul>
+			<h3>Friend</h3>
+			<ul>
+				<li>
+					<code>join &lt;user&gt;</code> Join a friend's party.
+				</li>
+				<li>
+					<code>friend add &lt;user&gt;</code> Send a friend request to a user.
+				</li>
+				<li>
+					<code>friend remove &lt;user&gt;</code> Remove a friend from the client's friend list.
+				</li>
+			</ul>
+			<h3>Other</h3>
+			<ul>
+				<li>
+					<code>set status &lt;status&gt;</code> Set the client's status.
+				</li>
+				<li>
+					<code>stop</code> Stop the bot, and make it available for others.
+				</li>
+			</ul>
+			<h2>Cloud Hosting Commands</h2>
+			<h2>Self Hosting Commands</h2>
+		</div>
+	</body>
+</html>
