@@ -29,3 +29,13 @@ jobs:
           vercel-org-id: ${{ secrets.ORG_ID }}
           vercel-project-id: ${{ secrets.PROJECT_ID }}
           working-directory: ./docs
+      
+      - name: Zip Folder
+        run: zip -r deployment docs/
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Deployment
+          path: deployment.zip
+        
