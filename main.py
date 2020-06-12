@@ -103,6 +103,10 @@ async def stop_bot(client: fortnitepy.Client):
 			color=0x747f8d
 		)
 	)
+	
+	await dclient.get_channel(720787276329910363).edit(
+		name=str(len(owner)) + "/256 Clients Running"
+	)
 
 async def start_bot(member: discord.Member, time: int):
 	try:
@@ -263,6 +267,10 @@ async def start_bot(member: discord.Member, time: int):
 		).set_thumbnail(
 			url=get_cosmetic_by_id(client.party.me.outfit)['icons']['icon']
 		)
+	)
+	
+	await dclient.get_channel(720787276329910363).edit(
+		name=str(len(owner)) + "/256 Clients Running"
 	)
 	
 	loop.call_later(time, loop.create_task, stop_bot(client))
