@@ -1,0 +1,31 @@
+name: Website
+on:
+  push:
+    branches: ["master"]
+    paths: ["site/**"]
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Upload Files
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        with:
+          username: Aerial
+          server: ${{ secrets.PROD_HOST }}
+          private_key: ${{ secrets.PROD_KEY }}
+          local_path: $GITHUB_WORKSPACE/site/**
+          remote_path: /home/Aerial/site
+          args: -o ConnectTimeout=5
+      
+      - name: Zip Folder
+        run: zip -r deployment site/
+        
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Deployment
+          path: deployment.zip
+        
