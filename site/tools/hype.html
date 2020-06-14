@@ -21,12 +21,11 @@
 				background: linear-gradient(45deg, #184594 0%, #530955 100%) fixed;
 			}
 			.container {
-				margin-top: 4%;
+				margin-top: 2%;
 				padding: 20px;
 				background-image: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25));
 			}
 			.results {
-				margin-top: 2%;
 				text-align: center;
 				display: none;
 			}
@@ -44,16 +43,16 @@
 			});
 			function calc() {
 				var div = {
-					'Open League I': 1,
-					'Open League II': 2,
-					'Open League III': 3,
-					'Open League IV': 4,
-					'Contender League I': 5,
-					'Contender League II': 6,
-					'Contender League III': 7,
-					'Champion League I': 8,
-					'Champion League II': 9,
-					'Champion League III': 10
+					'1 | Open League I': 1,
+					'2 | Open League II': 2,
+					'3 | Open League III': 3,
+					'4 | Open League IV': 4,
+					'5 | Contender League I': 5,
+					'6 | Contender League II': 6,
+					'7 | Contender League III': 7,
+					'8 | Champion League I': 8,
+					'9 | Champion League II': 9,
+					'10 | Champion League III': 10
 				}[document.getElementById('divSelector').value];
 				var eliminations = document.getElementById('eliminations').value;
 				var placement = document.getElementById('placement').value;
@@ -75,41 +74,41 @@
 					var busFare = 70
 				};
 				if (modeSolos) {
-					var points = eliminations * 20
+					var hype = eliminations * 20
 					if (placement <= 25) {
-						points = points + 60
+						hype = hype + 60
 					}
 					if (placement <= 15) {
-						points = points + 30
+						hype = hype + 30
 					}
 					if (placement <= 5) {
-						points = points + 30
+						hype = hype + 30
 					}
 					if (placement == 1) {
-						points = points + 60
+						hype = hype + 60
 					}
 				} else if (modeTrios) {
-					var points = eliminations * 7
+					var hype = eliminations * 7
 					if (placement <= 8) {
-						points = points + 60
+						hype = hype + 60
 					}
 					if (placement <= 4) {
-						points = points + 30
+						hype = hype + 30
 					}
 					if (placement <= 2) {
-						points = points + 30
+						hype = hype + 30
 					}
 					if (placement == 1) {
-						points = points + 60
+						hype = hype + 60
 					}
 				};
-				points = points - busFare;
+				hype = hype - busFare;
 				var results = document.getElementsByClassName('results')[0];
-				if (points < 0) {
-					results.innerHTML = '<h1 class="text-light"><span class="badge badge-danger">' + points + '</span> Points Lost </h1>';
+				if (hype < 0) {
+					results.innerHTML = '<h1 class="text-light"><span class="badge badge-danger">' + hype + '</span> Hype Lost </h1>';
 					results.style.background = 'linear-gradient(rgba(239, 20, 62, 0.25), rgba(239, 20, 62, 0.25))';
 				} else {
-					results.innerHTML = '<h1 class="text-light"><span class="badge badge-success">' + points + '</span> Points Gained </h1>';
+					results.innerHTML = '<h1 class="text-light"><span class="badge badge-success">' + hype + '</span> Hype Gained </h1>';
 					results.style.background = 'linear-gradient(rgba(0, 171, 52, 0.25), rgba(0, 171, 52, 0.25))';
 				}
 				results.style.display = 'block';
@@ -145,7 +144,7 @@
 			</div>
 		</nav>
 		<!-- Main Form -->
-		<div class="container shadow-lg rounded-lg mw-50">
+		<div class="container shadow-lg rounded-lg mw-50" style="margin-top: 4%;">
 			<form id="calculator" class="needs-validation">
 				<h1 class="text-light" style="padding: 0 0 10px 0;">Hype Calculator</h1>
 					<div class="form-group input-group">
@@ -153,16 +152,16 @@
 							<div class="input-group-text bg-dark text-light border border-dark">Division</div>
 						</div>
 						<select class="form-control bg-dark text-light custom-select border border-dark" id="divSelector">
-							<option>Open League I</option>
-							<option>Open League II</option>
-							<option>Open League III</option>
-							<option>Open League IV</option>
-							<option>Contender League I</option>
-							<option>Contender League II</option>
-							<option>Contender League III</option>
-							<option>Champion League I</option>
-							<option>Champion League II</option>
-							<option>Champion League III</option>
+							<option>1 | Open League I</option>
+							<option>2 | Open League II</option>
+							<option>3 | Open League III</option>
+							<option>4 | Open League IV</option>
+							<option>5 | Contender League I</option>
+							<option>6 | Contender League II</option>
+							<option>7 | Contender League III</option>
+							<option>8 | Champion League I</option>
+							<option>9 | Champion League II</option>
+							<option>10 | Champion League III</option>
 						</select>
 					</div>
 					<div class="form-group input-group">
