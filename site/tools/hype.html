@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Hype Calculator</title>
+		<meta name="description" content="Calculate Arena Hype with Ease!" />
+		<meta name="theme-color" content="#530955" />
+		<meta property="og:image" content="https://aerial.andre4ik3.dev/tools/hype_bg.png" />
+		<meta name="apple-mobile-web-app-title" content="Hype" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/png" href="hype.png" />
+		<link rel="apple-touch-icon" href="hype_bg.png" />
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+		<style>
+			html, body {
+				background: linear-gradient(45deg, #184594 0%, #530955 100%) fixed;
+			}
+			.container {
+				margin-top: 4%;
+				padding: 20px;
+				background-image: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25));
+			}
+			.results {
+				margin-top: 2%;
+				text-align: center;
+				display: none;
+			}
+		</style>
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				if (navigator.standalone) {
+					var navbar = document.getElementById('navbar');
+					navbar.parentNode.removeChild(navbar);
+				};
+				document.getElementById('calculator').addEventListener('submit', function() {
+					event.preventDefault();
+					calc();
+				});
+			});
+			function calc() {
+				var div = {
+					'Open League I': 1,
+					'Open League II': 2,
+					'Open League III': 3,
+					'Open League IV': 4,
+					'Contender League I': 5,
+					'Contender League II': 6,
+					'Contender League III': 7,
+					'Champion League I': 8,
+					'Champion League II': 9,
+					'Champion League III': 10
+				}[document.getElementById('divSelector').value];
+				var eliminations = document.getElementById('eliminations').value;
+				var placement = document.getElementById('placement').value;
+				var modeSolos = document.getElementById('modeSolos').checked;
+				var modeTrios = document.getElementById('modeTrios').checked;
+				if (div < 4) {
+					var busFare = 0
+				} else if (div < 5) {
+					var busFare = 10
+				} else if (div < 6) {
+					var busFare = 20
+				} else if (div < 7) {
+					var busFare = 30
+				} else if (div < 8) {
+					var busFare = 40
+				} else if (div < 10) {
+					var busFare = 60
+				} else {
+					var busFare = 70
+				};
+				if (modeSolos) {
+					var points = eliminations * 20
+					if (placement <= 25) {
+						points = points + 60
+					}
+					if (placement <= 15) {
+						points = points + 30
+					}
+					if (placement <= 5) {
+						points = points + 30
+					}
+					if (placement == 1) {
+						points = points + 60
+					}
+				} else if (modeTrios) {
+					var points = eliminations * 7
+					if (placement <= 8) {
+						points = points + 60
+					}
+					if (placement <= 4) {
+						points = points + 30
+					}
+					if (placement <= 2) {
+						points = points + 30
+					}
+					if (placement == 1) {
+						points = points + 60
+					}
+				};
+				points = points - busFare;
+				var results = document.getElementsByClassName('results')[0];
+				if (points < 0) {
+					results.innerHTML = '<h1 class="text-light"><span class="badge badge-danger">' + points + '</span> Points Lost </h1>';
+					results.style.background = 'linear-gradient(rgba(239, 20, 62, 0.25), rgba(239, 20, 62, 0.25))';
+				} else {
+					results.innerHTML = '<h1 class="text-light"><span class="badge badge-success">' + points + '</span> Points Gained </h1>';
+					results.style.background = 'linear-gradient(rgba(0, 171, 52, 0.25), rgba(0, 171, 52, 0.25))';
+				}
+				results.style.display = 'block';
+				results.style.position = 'sticky';
+			}
+		</script>
+	</head>
+	<body>
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand-lg navbar-dark" id="navbar" style="background-color: #a537c6;">
+			<a class="navbar-brand" href="https://aerial.andre4ik3.dev" style="font-weight: 300">Aerial</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="https://aerial.now.sh">Documentation</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="https://discord.gg/r7DHHfY">Discord</a>
+					</li>
+					<li class="nav-item dropdown active">
+						<a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">Tools</a>
+						<div class="dropdown-menu bg-dark">
+							<a class="dropdown-item bg-dark text-light" href="/tools/hype">Hype Calculator</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		<!-- Main Form -->
+		<div class="container shadow-lg rounded-lg mw-50">
+			<form id="calculator" class="needs-validation">
+				<h1 class="text-light" style="padding: 0 0 10px 0;">Hype Calculator</h1>
+					<div class="form-group input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-dark text-light border border-dark">Division</div>
+						</div>
+						<select class="form-control bg-dark text-light custom-select border border-dark" id="divSelector">
+							<option>Open League I</option>
+							<option>Open League II</option>
+							<option>Open League III</option>
+							<option>Open League IV</option>
+							<option>Contender League I</option>
+							<option>Contender League II</option>
+							<option>Contender League III</option>
+							<option>Champion League I</option>
+							<option>Champion League II</option>
+							<option>Champion League III</option>
+						</select>
+					</div>
+					<div class="form-group input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-dark text-light border border-dark">Eliminations</div>
+						</div>
+						<input type="number" class="form-control bg-dark text-light border border-dark" id="eliminations" required />
+					</div>
+					<div class="form-group input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-dark text-light border border-dark">Placement</div>
+						</div>
+						<input type="number" class="form-control bg-dark text-light border border-dark" id="placement" required />
+					</div>
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" name="gamemode" id="modeSolos" class="custom-control-input" required />
+						<label class="custom-control-label text-light" for="modeSolos">Solos</label>
+					</div>
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" name="gamemode" id="modeTrios" class="custom-control-input" required />
+						<label class="custom-control-label text-light" for="modeTrios">Trios</label>
+					</div>
+					<button class="btn btn-primary" type="submit">Submit</button>
+			</form>
+		</div>
+		<!-- Results -->
+		<div class="container shadow-lg rounded-lg mw-50 results"></div>
+	</body>
+</html>
