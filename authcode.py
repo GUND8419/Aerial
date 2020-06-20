@@ -11,12 +11,6 @@ import json
 import bs4
 import os
 
-if os.path.isfile("config.yml"):
-	with open("config.yml", "r") as config:
-		config = yaml.safe_load(config)
-else:
-	sys.exit("Cannot Load config.yml!")
-
 def get(email: str, password: str) -> str:
 	browser = selenium.webdriver.Chrome()
 	browser.maximize_window()

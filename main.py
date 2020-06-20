@@ -10,33 +10,15 @@ import requests
 import sys
 from functools import partial
 
-
-# Load YAML Config #
-def load_config():
-    if os.path.isfile("config.yml"):
-        with open("config.yml", "r") as config:
-            return yaml.safe_load(config)
-    else:
-        sys.exit("Cannot Load config.yml!")
-
-
-# Auth Detail Functions #
-def get_device_auth_details() -> dict:
-    if os.path.isfile("device_auths.yml"):
-        with open("device_auths.yml", "r") as fp:
-            return yaml.safe_load(fp)
-        return {}
-
-
-def store_device_auth_details(email: str, details: dict):
-    existing = get_device_auth_details()
-    existing[email] = details
-    with open("device_auths.yml", "w") as fp:
-        yaml.dump(existing, fp, sort_keys=False, indent=2)
+# Load Accounts #
+if os.path.isfile("accounts.yml"):
+    accounts = yaml.safe_load(open("accounts.yml"))
+else:
+    sys.exit("Cannot Load accounts.yml!")
 
 
 # API Functions #
-def get_cosmetic(name: str, backendType: str):
+def get_cosmetic(name: str, backendType: str = ""):
     return json.loads(requests.get(
         "https://benbotfn.tk/api/v1/cosmetics/br/search",
         params={
@@ -66,9 +48,7 @@ def get_playlist(name: str):
 
 
 # Variables #
-config = load_config()
 dotenv.load_dotenv()
-password = os.getenv("PASSWORD")
 clients = {}
 reverse = {}
 available = {}
@@ -104,12 +84,12 @@ async def refresh_message(client: fortnitepy.Client):
 
 
 async def stop_bot(client: fortnitepy.Client):
-    if client.is_ready():
-        for f in client.friends.values():
-            await f.remove()
-        for f in client.pending_friends.values():
-            await f.decline()
-        await client.close()
+    await client.wait_until_ready()
+    for f in client.friends.values():
+        await f.remove()
+    for f in client.pending_friends.values():
+        await f.decline()
+    await client.close()
     available[reverse[client]] = client
     reverseowner.pop(owner[client])
     owner.pop(client)
@@ -146,7 +126,7 @@ async def start_bot(member: discord.Member, time: int):
         )
         return
     else:
-        client = random.choice(available)
+        client = available[random.choice(list(available.keys()))]
         available.pop(reverse[client])
         owner[client] = member.id
         reverseowner[member.id] = client
@@ -154,6 +134,8 @@ async def start_bot(member: discord.Member, time: int):
 
     @client.event
     async def event_friend_request(friend: fortnitepy.PendingFriend):
+        if friend.direction != "INBOUND":
+            return
         rmsg = await member.send(
             embed=discord.Embed(
                 title="<:FriendRequest:719042256849338429> Friend Request from " + friend.display_name,
@@ -304,6 +286,11 @@ async def parse_command(message: discord.Message):
     client = reverseowner[message.author.id]
     if msg[0].lower() == "stop" or msg[0].lower() == "logout":
         await stop_bot(client)
+    elif msg[0].lower() == "restart" or msg[0].lower() == "reboot":
+        restartmsg = await message.channel.send("<a:Queue:720808283740569620> Restarting...")
+        await client.restart()
+        await client.wait_until_ready()
+        await restartmsg.edit("<:Accept:719047548219949136> Restarted!", delete_after=10)
     elif msg[0].lower() == "ready":
         await client.party.me.set_ready(fortnitepy.ReadyState.READY)
     elif msg[0].lower() == "unready" or msg[0].lower() == "sitin":
@@ -351,36 +338,38 @@ async def parse_command(message: discord.Message):
             await message.channel.send("<:Accept:719047548219949136> Joined " + p.display_name, delete_after=10)
         except fortnitepy.Forbidden:
             await message.channel.send("<:Reject:719047548819472446> Cannot Join " + p.display_name + " as their Party is Private", delete_after=10)
+        except:
+            await message.channel.send("<:Reject:719047548819472446> Cannot Join " + p.display_name, delete_after=10)
     elif msg[0].lower() == "set":
         if len(msg) >= 3:
             if msg[1].lower() == "outfit" or msg[1].lower() == "skin":
                 msg[2] = " ".join(msg[2:])
                 if msg[2].startswith("CID_"):
-                    await client.party.me.set_outfit(msg[2])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_outfit, msg[2]))
                     await message.channel.send("<:Accept:719047548219949136> Set Outfit to " + msg[2], delete_after=10)
-                    refresh_message(client)
+                    await refresh_message(client)
                 else:
                     cosmetic = get_cosmetic(name=msg[2], backendType="AthenaCharacter")
                     if list(cosmetic.keys()) == ['error']:
                         await message.channel.send("<:Reject:719047548819472446> Cannot Find Outfit " + msg[2], delete_after=10)
                     else:
-                        await client.party.me.set_outfit(cosmetic['id'])
+                        await client.party.me.edit_and_keep(partial(client.party.me.set_outfit, cosmetic['id']))
                         await message.channel.send("<:Accept:719047548219949136> Set Outfit to " + cosmetic['name'], delete_after=10)
                         await refresh_message(client)
             elif msg[1].lower() == "backbling" or msg[1].lower() == "backpack":
                 msg[2] = " ".join(msg[2:])
                 if msg[2].startswith("BID_"):
-                    await client.party.me.set_backpack(msg[2])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_backpack, msg[2]))
                     await message.channel.send("<:Accept:719047548219949136> Set Back Bling to " + msg[2], delete_after=10)
                 elif msg[2].lower() == "none":
-                    await client.party.me.clear_backpack()
+                    await client.party.me.edit_and_keep(partial(client.party.me.clear_backpack))
                     await message.channel.send("<:Accept:719047548219949136> Set Back Bling to None", delete_after=10)
                 else:
                     cosmetic = get_cosmetic(name=msg[2], backendType="AthenaBackpack")
                     if list(cosmetic.keys()) == ['error']:
                         await message.channel.send("<:Reject:719047548819472446> Cannot Find Back Bling " + msg[2], delete_after=10)
                     else:
-                        await client.party.me.set_backpack(cosmetic['id'])
+                        await client.party.me.edit_and_keep(partial(client.party.me.set_backpack, cosmetic['id']))
                         await message.channel.send("<:Accept:719047548219949136> Set Back Bling to " + cosmetic['name'], delete_after=10)
             elif msg[1].lower() == "emote" or msg[1].lower() == "dance":
                 msg[2] = " ".join(msg[2:])
@@ -401,41 +390,41 @@ async def parse_command(message: discord.Message):
             elif msg[1].lower() == "harvesting_tool" or msg[1].lower() == "harvestingtool" or msg[1].lower() == "pickaxe":
                 msg[2] = " ".join(msg[2:])
                 if msg[2].startswith("Pickaxe_ID"):
-                    await client.party.me.set_pickaxe(msg[2])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_pickaxe, msg[2]))
                     await message.channel.send("<:Accept:719047548219949136> Set Harvesting Tool to " + msg[2], delete_after=10)
                 else:
                     cosmetic = get_cosmetic(name=msg[2], backendType="AthenaPickaxe")
                     if list(cosmetic.keys()) == ['error']:
                         await message.channel.send("<:Reject:719047548819472446> Cannot Find Harvesting Tool " + msg[2], delete_after=10)
                     else:
-                        await client.party.me.set_pickaxe(cosmetic['id'])
+                        await client.party.me.edit_and_keep(partial(client.party.me.set_pickaxe, cosmetic['id']))
                         await message.channel.send("<:Accept:719047548219949136> Set Harvesting Tool to " + cosmetic['name'], delete_after=10)
             elif msg[1].lower() == "banner" and len(msg) == 4:
                 if msg[2].lower() == "design" or msg[2].lower() == "icon":
-                    await client.party.me.set_banner(icon=msg[3], color=client.party.me.banner[1], season_level=client.party.me.banner[2])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_banner, icon=msg[3], color=client.party.me.banner[1], season_level=client.party.me.banner[2]))
                     await message.channel.send("<:Accept:719047548219949136> Set Banner Design to " + msg[3], delete_after=10)
                 elif msg[2].lower() == "color" or msg[2].lower() == "colour":
-                    await client.party.me.set_banner(icon=client.party.me.banner[0], color=msg[3], season_level=client.party.me.banner[2])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_banner, icon=client.party.me.banner[0], color=msg[3], season_level=client.party.me.banner[2]))
                     await message.channel.send("<:Accept:719047548219949136> Set Banner Color to " + msg[3], delete_after=10)
                 elif msg[2].lower() == "season_level" or msg[2].lower() == "level":
-                    await client.party.me.set_banner(icon=client.party.me.banner[0], color=client.party.me.banner[1], season_level=msg[3])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_banner, icon=client.party.me.banner[0], color=client.party.me.banner[1], season_level=msg[3]))
                     await message.channel.send("<:Accept:719047548219949136> Set Season Level to " + msg[3], delete_after=10)
             elif msg[1].lower() == "battlepass" or msg[1].lower() == "bp" and len(msg) == 4:
                 if msg[2].lower() == "has_purchased":
                     if msg[3] == "true":
-                        await client.party.me.set_battlepass_info(has_purchased=True)
+                        await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info, has_purchased=True))
                         await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Purchase Status to True", delete_after=10)
                     elif msg[3] == "false":
-                        await client.party.me.set_battlepass_info(has_purchased=False)
+                        await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info, has_purchased=False))
                         await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Purchase Status to False", delete_after=10)
                 elif msg[2].lower() == "level":
-                    await client.party.me.set_battlepass_info(level=msg[3])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info, level=msg[3]))
                     await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Level to " + msg[3], delete_after=10)
                 elif msg[2].lower() == "self_boost_xp":
-                    await client.party.me.set_battlepass_info(self_boost_xp=msg[3])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info, self_boost_xp=msg[3]))
                     await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Self Boost to " + msg[3], delete_after=10)
                 elif msg[2].lower() == "friend_boost_xp":
-                    await client.party.me.set_battlepass_info(friend_boost_xp=msg[3])
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info, friend_boost_xp=msg[3]))
                     await message.channel.send("<:Accept:719047548219949136> Set Battle Pass Friend Boost to " + msg[3], delete_after=10)
             elif msg[1].lower() == "status" or msg[1].lower() == "presence":
                 msg[2] = " ".join(msg[2:])
@@ -465,53 +454,53 @@ async def parse_command(message: discord.Message):
                             await message.channel.send("<:Reject:719047548819472446> I am Not Party Leader!", delete_after=10)
             elif msg[1].lower() == "variants" or msg[1].lower() == "variant":
                 if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
-                    await client.party.me.set_outfit(
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_outfit,
                         asset=client.party.me.outfit,
                         variants=client.party.me.create_variants(
                             item="AthenaCharacter",
                             **{msg[3]: msg[4]}
                         )
-                    )
+                    ))
                     await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
                 elif msg[2].lower() == "backbling" or msg[2].lower() == "backpack":
-                    await client.party.me.set_backpack(
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_backpack,
                         asset=client.party.me.backpack,
                         variants=client.party.me.create_variants(
                             item="AthenaBackpack",
                             **{msg[3]: msg[4]}
                         )
-                    )
+                    ))
                     await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
                 elif msg[2].lower() == "harvesting_tool" or msg[2].lower() == "harvestingtool" or msg[2].lower() == "pickaxe":
-                    await client.party.me.set_pickaxe(
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_pickaxe,
                         asset=client.party.me.pickaxe,
                         variants=client.party.me.create_variants(
                             item="AthenaPickaxe",
                             **{msg[3]: msg[4]}
                         )
-                    )
+                    ))
                     await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
             elif msg[1].lower() == "enlightenment" or msg[1].lower() == "enlighten":
                 if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
-                    await client.party.me.set_outfit(
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_outfit,
                         asset=client.party.me.outfit,
                         variants=client.party.me.outfit_variants,
                         enlightenment=(msg[3], msg[4])
-                    )
+                    ))
                     await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season " + msg[3] + " Level " + msg[4], delete_after=10)
                 elif msg[2].lower() == "backbling" or msg[2].lower() == "backpack":
-                    await client.party.me.set_backpack(
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_backpack,
                         asset=client.party.me.backpack,
                         variants=client.party.me.backpack_variants,
                         enlightenment=(msg[3], msg[4])
-                    )
+                    ))
                     await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season " + msg[3] + " Level " + msg[4], delete_after=10)
                 elif msg[2].lower() == "harvesting_tool" or msg[2].lower() == "harvestingtool" or msg[2].lower() == "pickaxe":
-                    await client.party.me.set_pickaxe(
+                    await client.party.me.edit_and_keep(partial(client.party.me.set_pickaxe,
                         asset=client.party.me.pickaxe,
                         variants=client.party.me.pickaxe_variants,
                         enlightenment=(msg[3], msg[4])
-                    )
+                    ))
                     await message.channel.send("<:Accept:719047548219949136> Set Enlightenment to Season" + msg[3] + " Level " + msg[4], delete_after=10)
     elif msg[0].lower() == "friend":
         msg[2] = " ".join(msg[2:])
@@ -540,7 +529,7 @@ async def parse_command(message: discord.Message):
         p = client.party.get_member(p.id)
         if p is None:
             return
-        await client.party.me.edit(
+        await client.party.me.edit_and_keep(
             partial(
                 client.party.me.set_outfit,
                 asset=p.outfit,
@@ -631,21 +620,21 @@ async def on_message(message: discord.Message):
             await message.delete()
     elif type(message.channel) == discord.DMChannel:
         await parse_command(message)
-for c in config:
-    device_auth_details = get_device_auth_details().get(config[c], {})
+for a in accounts:
     auth = fortnitepy.AdvancedAuth(
-        email=config[c],
-        password=password,
-        delete_existing_device_auths=False,
-        **device_auth_details
+        email=accounts[a]['Email'],
+        password=accounts[a]['Password'],
+        account_id=accounts[a]['Account ID'],
+        device_id=accounts[a]['Device ID'],
+        secret=accounts[a]['Secret']
     )
     client = fortnitepy.Client(
         auth=auth,
         platform=fortnitepy.Platform.MAC
     )
-    clients[c] = client
-    reverse[client] = c
-    available[c] = client
+    clients[a] = client
+    reverse[client] = a
+    available[a] = client
 try:
     loop.run_forever()
 except KeyboardInterrupt:

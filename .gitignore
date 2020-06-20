@@ -3,6 +3,5 @@
 .env
 .vercel
 *.sqlite
-config.yml
-device_auths.yml
+*.yml
 __pycache__
