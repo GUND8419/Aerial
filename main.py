@@ -287,10 +287,10 @@ async def parse_command(message: discord.Message):
     if msg[0].lower() == "stop" or msg[0].lower() == "logout":
         await stop_bot(client)
     elif msg[0].lower() == "restart" or msg[0].lower() == "reboot":
-        restartmsg = await message.channel.send("<a:Queue:720808283740569620> Restarting...")
+        restartmsg = await message.channel.send(content="<a:Queue:720808283740569620> Restarting...")
         await client.restart()
         await client.wait_until_ready()
-        await restartmsg.edit("<:Accept:719047548219949136> Restarted!", delete_after=10)
+        await restartmsg.edit(content="<:Accept:719047548219949136> Restarted!", delete_after=10)
     elif msg[0].lower() == "ready":
         await client.party.me.set_ready(fortnitepy.ReadyState.READY)
     elif msg[0].lower() == "unready" or msg[0].lower() == "sitin":
