@@ -603,6 +603,13 @@ loop.create_task(dclient.start(os.getenv("TOKEN")))
 
 
 @dclient.event
+async def on_ready():
+    await dclient.get_channel(720787276329910363).edit(
+        name="0/256 Clients Running"
+    )
+
+
+@dclient.event
 async def on_message(message: discord.Message):
     if message.channel.id == 718979003968520283:
         if "start" in message.content.lower():
