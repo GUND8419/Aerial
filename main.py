@@ -101,7 +101,7 @@ async def stop_bot(client: fortnitepy.Client, ownerid: int, text: str = None):
     )
 
     await dclient.get_channel(720787276329910363).edit(
-        name= len(owner) + "/256 Clients Running"
+        name=str(len(owner)) + "/256 Clients Running"
     )
 
 
@@ -133,7 +133,7 @@ async def start_bot(member: discord.Member, time: int):
         messages[client] = message
 
         await dclient.get_channel(720787276329910363).edit(
-            name= len(owner) + "/256 Clients Running"
+            name=str(len(owner)) + "/256 Clients Running"
         )
 
     @client.event
@@ -609,7 +609,7 @@ loop.create_task(dclient.start(os.getenv("TOKEN")))
 @dclient.event 
 async def on_ready():
     await dclient.get_channel(720787276329910363).edit(
-        name= "0/256 Clients Running"
+        name="0/256 Clients Running"
     )
 
 @dclient.event
