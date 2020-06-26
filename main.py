@@ -52,7 +52,6 @@ dotenv.load_dotenv()
 clients = {}
 available = {}
 owner = {}
-reverseowner = {}
 messages = {}
 loop = asyncio.get_event_loop()
 
@@ -82,7 +81,7 @@ async def refresh_message(client: fortnitepy.Client):
     )
 
 
-async def stop_bot(client: fortnitepy.Client, text: str = None):
+async def stop_bot(client: fortnitepy.Client, ownerid: int, text: str = None):
     await client.wait_until_ready()
     for f in list(client.friends.values()):
         await f.remove()
@@ -91,8 +90,7 @@ async def stop_bot(client: fortnitepy.Client, text: str = None):
     name = client.user.display_name
     await client.close()
     available[name] = client
-    reverseowner.pop(owner[client])
-    owner.pop(client)
+    owner.pop(ownerid)
     await messages[client].edit(
         embed=discord.Embed(
             title="<:Offline:719321200098017330> Bot Offline",
@@ -130,8 +128,7 @@ async def start_bot(member: discord.Member, time: int):
         name = random.choice(list(available.keys()))
         client = available[name]
         available.pop(name)
-        owner[client] = member.id
-        reverseowner[member.id] = client
+        owner[member.id] = client
         messages[client] = message
 
     @client.event
@@ -271,18 +268,18 @@ async def start_bot(member: discord.Member, time: int):
     await dclient.get_channel(720787276329910363).edit(
         name=str(len(owner)) + "/256 Clients Running"
     )
-    loop.call_later(time, loop.create_task, stop_bot(client, "This bot automatically shuts down after 90 minutes."))
+    loop.call_later(time, loop.create_task, stop_bot(client, member.id, "This bot automatically shuts down after 90 minutes."))
 
 
 async def parse_command(message: discord.Message):
     if type(message.channel) != discord.DMChannel or message.author.bot:
         return
     msg = message.content.split(" ")
-    if message.author.id not in list(reverseowner.keys()):
+    if message.author.id not in list(owner.keys()):
         return
-    client = reverseowner[message.author.id]
+    client = owner[message.author.id]
     if msg[0].lower() == "stop" or msg[0].lower() == "logout":
-        await stop_bot(client)
+        await stop_bot(client, message.author.id)
     elif msg[0].lower() == "restart" or msg[0].lower() == "reboot":
         restartmsg = await message.channel.send(content="<a:Queue:720808283740569620> Restarting...")
         await client.restart()
@@ -633,7 +630,7 @@ try:
     loop.run_forever()
 except KeyboardInterrupt:
     loop.create_task(dclient.close())
-    for client in owner:
-        loop.create_task(stop_bot(client))
+    for ownerid in owner:
+        loop.create_task(stop_bot(owner[ownerid]))
     for task in asyncio.Task.all_tasks():
         task.cancel()
