@@ -8,6 +8,8 @@ import asyncio
 import random
 import requests
 import sys
+import secrets
+import logging
 from functools import partial
 
 # Load Accounts #
@@ -68,6 +70,17 @@ dclient = discord.Client(
 
 
 # Bot Functions #
+async def refresh_count():
+    channel = dclient.get_channel(720787276329910363)
+    while True:
+        name = str(len(owner)) + "/" + str(len(clients)) + " Clients Running"
+        if name != channel.name:
+            await channel.edit(
+                name=name
+            )
+        await asyncio.sleep(600)
+
+
 async def refresh_message(client: fortnitepy.Client):
     message = messages[client]
     await message.edit(
@@ -100,10 +113,6 @@ async def stop_bot(client: fortnitepy.Client, ownerid: int, text: str = None):
         )
     )
 
-    await dclient.get_channel(720787276329910363).edit(
-        name=str(len(owner)) + "/256 Clients Running"
-    )
-
 
 async def start_bot(member: discord.Member, time: int):
     try:
@@ -131,10 +140,6 @@ async def start_bot(member: discord.Member, time: int):
         available.pop(name)
         owner[member.id] = client
         messages[client] = message
-
-        await dclient.get_channel(720787276329910363).edit(
-            name=str(len(owner)) + "/256 Clients Running"
-        )
 
     @client.event
     async def event_friend_request(friend: fortnitepy.PendingFriend):
@@ -269,9 +274,6 @@ async def start_bot(member: discord.Member, time: int):
         ).set_thumbnail(
             url=get_cosmetic_by_id(client.party.me.outfit)['icons']['icon']
         )
-    )
-    await dclient.get_channel(720787276329910363).edit(
-        name=str(len(owner)) + "/256 Clients Running"
     )
     loop.call_later(time, loop.create_task, stop_bot(client, member.id, "This bot automatically shuts down after 90 minutes."))
 
@@ -606,11 +608,15 @@ async def parse_command(message: discord.Message):
 
 loop.create_task(dclient.start(os.getenv("TOKEN")))
 
+@dclient.event
+async def on_error(event, args, kwargs):
+    print(event)
+
+
 @dclient.event 
 async def on_ready():
-    await dclient.get_channel(720787276329910363).edit(
-        name="0/256 Clients Running"
-    )
+    await refresh_count()
+
 
 @dclient.event
 async def on_message(message: discord.Message):
@@ -639,8 +645,8 @@ for a in accounts:
 try:
     loop.run_forever()
 except KeyboardInterrupt:
-    loop.create_task(dclient.close())
     for ownerid in owner:
         loop.create_task(stop_bot(owner[ownerid], ownerid, "All bots have been stopped by the server."))
     for task in asyncio.Task.all_tasks():
         task.cancel()
+    loop.create_task(dclient.close())
