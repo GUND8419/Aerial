@@ -115,7 +115,7 @@ async def start_bot(member: discord.Member, time: int):
         )
     except discord.Forbidden:
         return
-    if member.id in owner.values():
+    if member.id in list(owner.keys()):
         await message.edit(
             embed=discord.Embed(
                 title=":x: Bot Already Running!",
@@ -631,6 +631,6 @@ try:
 except KeyboardInterrupt:
     loop.create_task(dclient.close())
     for ownerid in owner:
-        loop.create_task(stop_bot(owner[ownerid]))
+        loop.create_task(stop_bot(owner[ownerid]), ownerid, "All bots have been stopped by the server.")
     for task in asyncio.Task.all_tasks():
         task.cancel()
