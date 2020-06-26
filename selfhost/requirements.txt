@@ -1,4 +1,0 @@
-fortnitepy
-pyyaml
-requests
-termcolor

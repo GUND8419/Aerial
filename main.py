@@ -50,7 +50,6 @@ def get_playlist(name: str):
 # Variables #
 dotenv.load_dotenv()
 clients = {}
-reverse = {}
 available = {}
 owner = {}
 reverseowner = {}
@@ -89,8 +88,9 @@ async def stop_bot(client: fortnitepy.Client, text: str = None):
         await f.remove()
     for f in list(client.pending_friends.values()):
         await f.decline()
+    name = client.user.display_name
     await client.close()
-    available[reverse[client]] = client
+    available[name] = client
     reverseowner.pop(owner[client])
     owner.pop(client)
     await messages[client].edit(
@@ -127,8 +127,9 @@ async def start_bot(member: discord.Member, time: int):
         )
         return
     else:
-        client = available[random.choice(list(available.keys()))]
-        available.pop(reverse[client])
+        name = random.choice(list(available.keys()))
+        client = available[name]
+        available.pop(name)
         owner[client] = member.id
         reverseowner[member.id] = client
         messages[client] = message
@@ -627,7 +628,6 @@ for a in accounts:
         platform=fortnitepy.Platform.MAC
     )
     clients[a] = client
-    reverse[client] = a
     available[a] = client
 try:
     loop.run_forever()
