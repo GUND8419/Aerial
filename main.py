@@ -631,6 +631,6 @@ try:
 except KeyboardInterrupt:
     loop.create_task(dclient.close())
     for ownerid in owner:
-        loop.create_task(stop_bot(owner[ownerid]), ownerid, "All bots have been stopped by the server.")
+        loop.create_task(stop_bot(owner[ownerid], ownerid, "All bots have been stopped by the server."))
     for task in asyncio.Task.all_tasks():
         task.cancel()
