@@ -83,11 +83,11 @@ async def refresh_message(client: fortnitepy.Client):
     )
 
 
-async def stop_bot(client: fortnitepy.Client):
+async def stop_bot(client: fortnitepy.Client, text: str = None):
     await client.wait_until_ready()
-    for f in client.friends.values():
+    for f in list(client.friends.values()):
         await f.remove()
-    for f in client.pending_friends.values():
+    for f in list(client.pending_friends.values()):
         await f.decline()
     await client.close()
     available[reverse[client]] = client
@@ -96,6 +96,7 @@ async def stop_bot(client: fortnitepy.Client):
     await messages[client].edit(
         embed=discord.Embed(
             title="<:Offline:719321200098017330> Bot Offline",
+            description=text,
             type="rich",
             color=0x747f8d
         )
@@ -243,18 +244,13 @@ async def start_bot(member: discord.Member, time: int):
     for f in client.pending_friends.values():
         await f.decline()
     await client.party.me.edit_and_keep(
-        partial(client.party.me.set_outfit, random.choice([
-            "CID_565_Athena_Commando_F_RockClimber",
-            "CID_430_Athena_Commando_M_StormSoldier",
-            "CID_384_Athena_Commando_M_StreetAssassin",
-            "CID_564_Athena_Commando_M_TacticalFisherman"
-        ])),
+        partial(client.party.me.set_outfit, "CID_565_Athena_Commando_F_RockClimber"),
         partial(client.party.me.set_backpack, "BID_122_HalloweenTomato"),
         partial(client.party.me.set_banner, icon="otherbanner31", color="defaultcolor3", season_level=1337)
     )
     client.set_avatar(
         fortnitepy.Avatar(
-            asset=client.party.me.outfit,
+            asset="CID_565_Athena_Commando_F_RockClimber",
             background_colors=[
                 "7c0dc8",
                 "b521cc",
@@ -274,7 +270,7 @@ async def start_bot(member: discord.Member, time: int):
     await dclient.get_channel(720787276329910363).edit(
         name=str(len(owner)) + "/256 Clients Running"
     )
-    loop.call_later(time, loop.create_task, stop_bot(client))
+    loop.call_later(time, loop.create_task, stop_bot(client, "This bot automatically shuts down after 90 minutes."))
 
 
 async def parse_command(message: discord.Message):
@@ -338,8 +334,6 @@ async def parse_command(message: discord.Message):
             await message.channel.send("<:Accept:719047548219949136> Joined " + p.display_name, delete_after=10)
         except fortnitepy.Forbidden:
             await message.channel.send("<:Reject:719047548819472446> Cannot Join " + p.display_name + " as their Party is Private", delete_after=10)
-        except:
-            await message.channel.send("<:Reject:719047548819472446> Cannot Join " + p.display_name, delete_after=10)
     elif msg[0].lower() == "set":
         if len(msg) >= 3:
             if msg[1].lower() == "outfit" or msg[1].lower() == "skin":
