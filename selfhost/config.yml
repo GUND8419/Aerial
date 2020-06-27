@@ -28,4 +28,5 @@ Cosmetics:
 Yield Leadership: Yes
 # Authorization Settings #
 # Don't touch this unless you know what you're doing #
-Authorization: {}
+Authorization: 
+  prompt_authorization_code: True
