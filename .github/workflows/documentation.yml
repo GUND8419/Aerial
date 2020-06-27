@@ -20,6 +20,9 @@ jobs:
           vercel-project-id: ${{ secrets.PROJECT_ID }}
           working-directory: ./docs
       
+      - name: Execute Discord Webhook
+        run: curl -s -L -X POST 'https://discordapp.com/api/webhooks/726465773962265139/${{ secrets.WEBHOOK }}' -H 'Content-Type: application/json' --data-raw '{"embeds": [{"title": "Deployed Documentation to Vercel","description": "https://aerial.now.sh","type": "rich","color": "39169"}]}'
+      
       - name: Zip Folder
         run: zip -r deployment docs/
       
