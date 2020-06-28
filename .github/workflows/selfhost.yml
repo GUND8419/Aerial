@@ -1,7 +1,7 @@
 name: Self Host
 on:
   push:
-    branches: ["master"]
+    branches: ["master", "selfhost"]
     paths: ["selfhost/**"]
 jobs:
   Test:
