@@ -13,7 +13,7 @@ from functools import partial
 loop = asyncio.get_event_loop()
 
 # Updater #
-version = 2  # INCREMENT THIS BEFORE RELEASE
+version = 3  # INCREMENT THIS BEFORE RELEASE
 latest = requests.get(
     "https://api.github.com/repos/andre4ik3/Aerial/releases/latest"
 ).json().get("id", version)
@@ -218,7 +218,10 @@ async def event_ready():
 async def event_friend_message(message: fortnitepy.FriendMessage):
     cprint(f"[{message.author.display_name}] {message.content}", "magenta")
     msg = message.content.split(" ")
-    if msg[0].lower() == "ready":
+    if msg[0].lower == "help":
+        await message.reply("Documentation is available here: https://aerial.now.sh/")
+        cprint("Documentation is available here: https://aerial.now.sh/", "blue")
+    elif msg[0].lower() == "ready":
         await client.party.me.set_ready(fortnitepy.ReadyState.READY)
     elif msg[0].lower() == "unready" or msg[0].lower() == "sitin":
         await client.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
