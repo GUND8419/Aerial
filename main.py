@@ -8,8 +8,6 @@ import asyncio
 import random
 import requests
 import sys
-import secrets
-import logging
 from functools import partial
 
 # Load Accounts #
@@ -49,12 +47,34 @@ def get_playlist(name: str):
     ).text)
 
 
+def convert(ls: list):
+    return {ls[i]: ls[i + 1] for i in range(0, len(ls), 2)}
+
+
 # Variables #
 dotenv.load_dotenv()
 clients = {}
 available = {}
 owner = {}
 messages = {}
+hook = discord.Webhook.from_url(
+    os.getenv("EXCEPTHOOK"),
+    adapter=discord.RequestsWebhookAdapter()
+)
+
+
+# Exception Hook #
+def excepthook(etype, evalue, etraceback):
+    hook.send(
+        embed=discord.Embed(
+            title="Exception",
+            type="rich",
+            description=str(etype) + "\n\n" + str(evalue) + "\n\n" + str(etraceback)
+        )
+    )
+
+
+sys.excepthook = excepthook()
 loop = asyncio.get_event_loop()
 
 # Discord Client #
@@ -67,6 +87,7 @@ dclient = discord.Client(
         url="https://twitch.tv/andre4ik3"
     )
 )
+dguild = dclient.get_guild(718842309998805022)
 
 
 # Bot Functions #
@@ -112,6 +133,11 @@ async def stop_bot(client: fortnitepy.Client, ownerid: int, text: str = None):
             color=0x747f8d
         )
     )
+    await dguild.get_member(ownerid).remove_roles(
+        dguild.get_role(
+            726790319688908942
+        )
+    )
 
 
 async def start_bot(member: discord.Member, time: int):
@@ -140,6 +166,11 @@ async def start_bot(member: discord.Member, time: int):
         available.pop(name)
         owner[member.id] = client
         messages[client] = message
+        await dguild.get_member(ownerid).remove_roles(
+            dguild.get_role(
+                726790319688908942
+            )
+        )
 
     @client.event
     async def event_friend_request(friend: fortnitepy.PendingFriend):
@@ -452,12 +483,13 @@ async def parse_command(message: discord.Message):
                         except fortnitepy.Forbidden:
                             await message.channel.send("<:Reject:719047548819472446> I am Not Party Leader!", delete_after=10)
             elif msg[1].lower() == "variants" or msg[1].lower() == "variant":
+                variants = convert(msg[3:])
                 if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
                     await client.party.me.edit_and_keep(partial(client.party.me.set_outfit,
                         asset=client.party.me.outfit,
                         variants=client.party.me.create_variants(
                             item="AthenaCharacter",
-                            **{msg[3]: msg[4]}
+                            **variants
                         )
                     ))
                     await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
@@ -466,7 +498,7 @@ async def parse_command(message: discord.Message):
                         asset=client.party.me.backpack,
                         variants=client.party.me.create_variants(
                             item="AthenaBackpack",
-                            **{msg[3]: msg[4]}
+                            **variants
                         )
                     ))
                     await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
@@ -475,7 +507,7 @@ async def parse_command(message: discord.Message):
                         asset=client.party.me.pickaxe,
                         variants=client.party.me.create_variants(
                             item="AthenaPickaxe",
-                            **{msg[3]: msg[4]}
+                            **variants
                         )
                     ))
                     await message.channel.send("<:Accept:719047548219949136> Set Variants to " + msg[3] + " = " + msg[4], delete_after=10)
@@ -608,12 +640,8 @@ async def parse_command(message: discord.Message):
 
 loop.create_task(dclient.start(os.getenv("TOKEN")))
 
+
 @dclient.event
-async def on_error(event, args, kwargs):
-    print(event)
-
-
-@dclient.event 
 async def on_ready():
     await refresh_count()
 

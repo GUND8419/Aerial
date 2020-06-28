@@ -55,6 +55,10 @@ def get_playlist(name: str):
     ).json()
 
 
+def convert(ls: list):
+    return {ls[i]: ls[i + 1] for i in range(0, len(ls), 2)}
+
+
 # Config #
 if os.path.isfile("config.yml"):
     config = yaml.safe_load(open("config.yml", "r"))
@@ -407,6 +411,7 @@ async def event_friend_message(message: fortnitepy.FriendMessage):
                             await message.reply("I am Not Party Leader!")
                             cprint("[Client] I am Not Party Leader!", "red")
             elif msg[1].lower() == "variants" or msg[1].lower() == "variant":
+                variants = convert(msg[3:])
                 if msg[2].lower() == "outfit" or msg[2].lower() == "skin":
                     await client.party.me.edit_and_keep(
                         partial(
@@ -414,7 +419,7 @@ async def event_friend_message(message: fortnitepy.FriendMessage):
                             asset=client.party.me.outfit,
                             variants=client.party.me.create_variants(
                                 item="AthenaCharacter",
-                                **{msg[3]: msg[4]}
+                                **variants
                             )
                         )
                     )
@@ -427,7 +432,7 @@ async def event_friend_message(message: fortnitepy.FriendMessage):
                             asset=client.party.me.backpack,
                             variants=client.party.me.create_variants(
                                 item="AthenaBackpack",
-                                **{msg[3]: msg[4]}
+                                **variants
                             )
                         )
                     )
@@ -440,7 +445,7 @@ async def event_friend_message(message: fortnitepy.FriendMessage):
                             asset=client.party.me.pickaxe,
                             variants=client.party.me.create_variants(
                                 item="AthenaPickaxe",
-                                **{msg[3]: msg[4]}
+                                **variants
                             )
                         )
                     )
