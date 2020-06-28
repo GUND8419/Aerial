@@ -13,7 +13,7 @@ from functools import partial
 loop = asyncio.get_event_loop()
 
 # Updater #
-version = 1  # INCREMENT THIS BEFORE RELEASE
+version = 2  # INCREMENT THIS BEFORE RELEASE
 latest = requests.get(
     "https://api.github.com/repos/andre4ik3/Aerial/releases/latest"
 ).json().get("id", version)
