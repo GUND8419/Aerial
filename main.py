@@ -1,14 +1,22 @@
 import os
 import discord
 import fortnitepy
-import json
 import yaml
 import dotenv
 import asyncio
 import random
 import requests
 import sys
+import logging
+import signal
 from functools import partial
+
+# Logging #
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s: %(message)s",
+    datefmt="%H:%M:%S",
+)
 
 # Load Accounts #
 if os.path.isfile("accounts.yml"):
@@ -83,12 +91,11 @@ def loopexcepthook(loop, context):
             description=str(context['message']) + "\n\n" + context.get("exception", "")
         )
     )
-    return
+    return True
 
 
 sys.excepthook = excepthook
 loop = asyncio.get_event_loop()
-loop.set_exception_handler(loopexcepthook)
 
 # Discord Client #
 dclient = discord.Client(
@@ -103,13 +110,25 @@ dclient = discord.Client(
 
 
 # Bot Functions #
+def shutdown():
+    for ownerid in owner:
+        loop.create_task(stop_bot(owner[ownerid], ownerid, "All bots have been stopped by the server."))
+    loop.create_task(dclient.close())
+
+
 async def refresh_count():
     channel = dclient.get_channel(720787276329910363)
+    membercount = dclient.get_channel(727141497081954364)
     while True:
         name = str(len(owner)) + "/" + str(len(clients)) + " Clients Running"
         if name != channel.name:
             await channel.edit(
                 name=name
+            )
+        counter = str(len(dclient.get_guild(718842309998805022).member_count)) + " Members"
+        if counter != membercount.name:
+            await membercount.edit(
+                name=counter
             )
         await asyncio.sleep(600)
 
@@ -148,6 +167,7 @@ async def stop_bot(client: fortnitepy.Client, ownerid: int, text: str = None):
             color=0x747f8d
         )
     )
+    hook.send(":heavy_minus_sign: " + dclient.get_user(ownerid).mention + " is no longer using the bot")
 
 
 async def start_bot(member: discord.Member, time: int):
@@ -283,9 +303,9 @@ async def start_bot(member: discord.Member, time: int):
                 )
     loop.create_task(client.start())
     await client.wait_until_ready()
-    for f in client.friends.values():
+    for f in list(client.friends.values()):
         await f.remove()
-    for f in client.pending_friends.values():
+    for f in list(client.pending_friends.values()):
         await f.decline()
     await client.party.me.edit_and_keep(
         partial(client.party.me.set_outfit, "CID_565_Athena_Commando_F_RockClimber"),
@@ -311,7 +331,8 @@ async def start_bot(member: discord.Member, time: int):
             url=get_cosmetic_by_id(client.party.me.outfit)['icons']['icon']
         )
     )
-    await message.channel.send(content="Documentation is available here: **<https://aerial.now.sh/>**")
+    hook.send(":heavy_plus_sign: " + member.mention + " is now using the bot (" + client.user.display_name + ")")
+    await message.channel.send(content="Documentation is available here: **<https://aerial.now.sh/>**", delete_after=120)
     tasks[client] = loop.call_later(
         time,
         loop.create_task,
@@ -689,9 +710,9 @@ for a in accounts:
     )
     clients[a] = client
     available[a] = client
-try:
-    loop.run_until_complete(future=asyncio.Future(loop=loop))
-except KeyboardInterrupt:
-    for ownerid in owner:
-        loop.create_task(stop_bot(owner[ownerid], ownerid, "All bots have been stopped by the server."))
-    loop.create_task(dclient.close())
+
+for s in (signal.SIGHUP, signal.SIGTERM, signal.SIGINT):
+    loop.add_signal_handler(s, shutdown)
+
+loop.set_exception_handler(loopexcepthook)
+loop.run_forever()
