@@ -125,7 +125,7 @@ async def refresh_count():
             await channel.edit(
                 name=name
             )
-        counter = str(len(dclient.get_guild(718842309998805022).member_count)) + " Members"
+        counter = str(dclient.get_guild(718842309998805022).member_count) + " Members"
         if counter != membercount.name:
             await membercount.edit(
                 name=counter
